@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planetmint Addresses and Balances</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/app.css') }}">
+</head>
+<body>
+    <div class="wrapper-container">
+        <div class="main-container">
+            <div class="wrapper">
+                <section class="section">
+                    <h1 class="center">Planetmint Addresses and Balances</h1>
+                    {% if error %}
+                        <p class="error warning">{{ error }}</p>
+                    {% endif %}
+                    <form action="/add_address" method="post">
+                        <div class="form-input">
+                            <input type="text" name="address" placeholder="Enter Planetmint address" required>
+                            <input type="submit" value="Add Address" class="btn">
+                        </div>
+                    </form>
+                </section>
+
+                <section class="section">
+                    <h2 class="section-title">Address List</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Address</th>
+                                <th>RDDL</th>
+                                <th>Staged RDDL</th>
+                                <th>PLMNT</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for balance in balances %}
+                            <tr>
+                                <td><code>{{ balance.address }}</code></td>
+                                <td>{{ balance.rddl }}</td>
+                                <td>{{ balance.staged_rddl }}</td>
+                                <td>{{ balance.plmnt }}</td>
+                                <td>
+                                    <form class="delete-form" action="/delete_address/{{ loop.index }}" method="post">
+                                        <input type="submit" value="Delete" class="btn-small">
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <div class="spinner-overlay">
+        <div class="spinner"></div>
+    </div>
+</body>
+</html>
