@@ -11,7 +11,7 @@ from starlette.staticfiles import StaticFiles
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="templates/static"), name="static")
 
 # Database setup
 SQLALCHEMY_DATABASE_URL = "sqlite:///./planetmint_addresses.db"

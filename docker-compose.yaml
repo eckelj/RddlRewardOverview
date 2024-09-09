@@ -1,0 +1,13 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./planetmint_addresses.db:/app/planetmint_addresses.db
+      - ./templates:/app/templates
+    environment:
+      - DATABASE_URL=sqlite:///./planetmint_addresses.db
+    restart: unless-stopped
