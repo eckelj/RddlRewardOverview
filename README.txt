@@ -8,4 +8,6 @@ The application will be available at http://localhost:8000.
 
 Or run it as docker container with docker-compose:
 
-docker-compose up -d
+docker-compose up -d              # start the application
+docker-compose down               # stop the application
+docker-compose down -v            # remove the volumes
