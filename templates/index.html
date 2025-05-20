@@ -42,7 +42,8 @@
                     <form action="/add_address" method="post">
                         <div class="form-input">
                             <input type="text" name="address" placeholder="Enter Planetmint address" required>
-                            <input type="submit" value="Add Address" class="btn">
+                            <input type="text" name="ip" placeholder="Enter IP address (optional)">
+                            <input type="submit" value="Add / Update Address" class="btn">
                         </div>
                     </form>
                 </section>
@@ -63,6 +64,7 @@
                         <thead>
                             <tr>
                                 <th>Address</th>
+                                <th>IP</th>
                                 <th>RDDL</th>
                                 <th>Staged RDDL</th>
                                 <th>PLMNT</th>
@@ -72,7 +74,14 @@
                         <tbody>
                             {% for balance in balances %}
                             <tr>
-                                <td><code>{{ balance.address }}</code></td>
+                                <td><a href="https://explorer.rddl.io/planetmint/accounts/{{ balance.address }}" target="_blank"><code>{{ balance.address }}</code></a></td>
+                                <td>
+                                    {% if balance.ip %}
+                                        <a href="http://{{ balance.ip }}" target="_blank">{{ balance.ip }}</a>
+                                    {% else %}
+                                        {{ balance.ip or '' }}
+                                    {% endif %}
+                                </td>
                                 <td>{{ balance.rddl }}</td>
                                 <td>{{ balance.staged_rddl }}</td>
                                 <td>{{ balance.plmnt }}</td>
@@ -101,8 +110,8 @@
             let totalStagedRDDL = 0;
 
             for (let i = 1; i < table.rows.length; i++) {
-                totalRDDL += parseInt(table.rows[i].cells[1].innerText) || 0;
-                totalStagedRDDL += parseInt(table.rows[i].cells[2].innerText) || 0;
+                totalRDDL += parseInt(table.rows[i].cells[2].innerText) || 0;
+                totalStagedRDDL += parseInt(table.rows[i].cells[3].innerText) || 0;
             }
 
             document.getElementById('total-rddl').innerText = totalRDDL;

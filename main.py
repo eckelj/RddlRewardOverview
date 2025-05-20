@@ -24,6 +24,7 @@ class PlanetmintAddress(Base):
     __tablename__ = "planetmint_addresses"
     id = Column(Integer, primary_key=True, index=True)
     address = Column(String, unique=True, index=True)
+    ip = Column(String, nullable=True)  # New field for IP address
 
 
 Base.metadata.create_all(bind=engine)
@@ -59,17 +60,27 @@ async def fetch_balance(address):
 async def read_addresses(request: Request, db: Session = Depends(get_db), error: str = None):
     addresses = db.query(PlanetmintAddress).all()
     balances = await asyncio.gather(*[fetch_balance(address.address) for address in addresses])
+    # Attach IP to each balance dict
+    for balance, address in zip(balances, addresses):
+        if balance is not None:
+            balance["ip"] = address.ip
     balances = [b for b in balances if b is not None]
     return templates.TemplateResponse("index.html", {"request": request, "balances": balances, "error": error})
 
 
 @app.post("/add_address", response_class=HTMLResponse)
-async def add_address(request: Request, address: str = Form(...), db: Session = Depends(get_db)):
+async def add_address(request: Request, address: str = Form(...), ip: str = Form(None), db: Session = Depends(get_db)):
     balance = await fetch_balance(address)
     if balance is None:
         return RedirectResponse(url=f"/?error=Invalid+address+or+API+error", status_code=303)
 
-    db_address = PlanetmintAddress(address=address)
+    existing = db.query(PlanetmintAddress).filter(PlanetmintAddress.address == address).first()
+    if existing:
+        existing.ip = ip
+        db.commit()
+        return RedirectResponse(url="/", status_code=303)
+
+    db_address = PlanetmintAddress(address=address, ip=ip)
     db.add(db_address)
     try:
         db.commit()
