@@ -30,7 +30,7 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 # Copy project files
 COPY main.py .
 COPY templates app/templates/
-COPY README.txt .
+COPY README.md .
 
 # Create a non-root user
 RUN useradd -m appuser
